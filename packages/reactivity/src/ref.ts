@@ -1,7 +1,8 @@
 import { hasChanged } from '@vue/shared'
+import { activeEffect, trackEffects, triggerEffects } from './effect'
 import { createDep, Dep } from './dep'
 import { toReactive } from './reactive'
-import { activeEffect, trackEffects, triggerEffects } from './effect'
+import { ComputedRefImpl } from './computed'
 
 export interface Ref<T = any> {
   value: T
@@ -50,7 +51,7 @@ class RefImpl<T> {
 /**
  * 触发依赖
  */
-export function triggerRefValue(ref: RefImpl<any>) {
+export function triggerRefValue(ref: RefImpl<any> | ComputedRefImpl<any>) {
   if (ref.dep) {
     triggerEffects(ref.dep)
   }
@@ -59,7 +60,7 @@ export function triggerRefValue(ref: RefImpl<any>) {
 /**
  * 收集依赖
  */
-export function trackRefValue(ref: RefImpl<any>) {
+export function trackRefValue(ref: RefImpl<any> | ComputedRefImpl<any>) {
   if (activeEffect) {
     trackEffects(ref.dep || (ref.dep = createDep()))
   }
