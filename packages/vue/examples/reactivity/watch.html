@@ -12,21 +12,21 @@
 <body>
   <div id="app"></div>
 </body>
-
 <script>
-  const { ref, effect } = Vue
+  const { reactive, watch } = Vue
 
-  const obj = ref({
+  const obj = reactive({
     name: '张三'
   })
 
-  // 调用 effect 方法
-  effect(() => {
-    document.querySelector('#app').innerText = obj.value.name
+
+  watch(obj, (value, oldValue) => {
+    console.log('watch 监听被触发');
+    console.log('value', value);
   })
 
   setTimeout(() => {
-    obj.value.name = '李四'
+    obj.name = '李四'
   }, 2000);
 </script>
 
