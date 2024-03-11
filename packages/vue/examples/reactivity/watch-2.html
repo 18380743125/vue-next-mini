@@ -12,17 +12,18 @@
 <body>
   <div id="app"></div>
 </body>
-
 <script>
-  const { ref, effect } = Vue
+  const { ref, watch } = Vue
 
   const obj = ref({
     name: '张三'
   })
 
-  // 调用 effect 方法
-  effect(() => {
-    document.querySelector('#app').innerText = obj.value.name
+  watch(obj.value, (value, oldValue) => {
+    console.log('watch 监听被触发');
+    console.log('value', value);
+  }, {
+    immediate: true
   })
 
   setTimeout(() => {

@@ -10,23 +10,29 @@
 </head>
 
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <p id="p1"></p>
+    <p id="p2"></p>
+  </div>
 </body>
 
 <script>
-  const { ref, effect } = Vue
+  const { reactive, effect } = Vue
 
-  const obj = ref({
+  const obj = reactive({
     name: '张三'
   })
 
   // 调用 effect 方法
   effect(() => {
-    document.querySelector('#app').innerText = obj.value.name
+    document.querySelector('#p1').innerText = obj.name
+  })
+  effect(() => {
+    document.querySelector('#p2').innerText = obj.name
   })
 
   setTimeout(() => {
-    obj.value.name = '李四'
+    obj.name = '李四'
   }, 2000);
 </script>
 
