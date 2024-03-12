@@ -4,10 +4,6 @@ let isFlushPending = false
 // promise.resolve()
 const resolvedPromise = Promise.resolve() as Promise<any>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> aa3d47c44dbb5a7f99ec414560b69b8cfacf95cc
 // 当前的执行任务
 let currentFlushPromise: Promise<void> | null = null
 
