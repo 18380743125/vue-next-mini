@@ -1,6 +1,6 @@
 import { hasChanged } from '@vue/shared'
 import { activeEffect, trackEffects, triggerEffects } from './effect'
-import { createDep, Dep } from './dep'
+import { createDep, type Dep } from './dep'
 import { toReactive } from './reactive'
 import { ComputedRefImpl } from './computed'
 
