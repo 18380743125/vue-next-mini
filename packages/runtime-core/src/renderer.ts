@@ -1,6 +1,9 @@
 import { createVNode, Fragment, isSameVNodeType, Text } from './vnode'
 import { EMPTY_OBJ, isString, ShapeFlags } from '@vue/shared'
-import { normalizeVNode } from './componentRenderUtils'
+import { normalizeVNode, renderComponentRoot } from './componentRenderUtils'
+import { createComponentInstance, setupComponent } from './component'
+import { ReactiveEffect } from '../../reactivity/src/effect'
+import { queuePreFlushCb } from './scheduler'
 
 export interface RendererOptions {
   /**
@@ -48,6 +51,14 @@ function baseCreateRenderer(options: RendererOptions): any {
     setText: hostSetText,
     createComment: hostCreateComment
   } = options
+
+  const processComponent = (oldVNode, newVNode, container, anchor) => {
+    if (oldVNode == null) {
+      mountComponent(newVNode, container, anchor)
+    } else {
+
+    }
+  }
 
   const processFragment = (oldVNode, newVNode, container, anchor) => {
     if (oldVNode == null) {
@@ -163,6 +174,34 @@ function baseCreateRenderer(options: RendererOptions): any {
     }
   }
 
+  const mountComponent = (initialVNode, container, anchor) => {
+    initialVNode.component = createComponentInstance(initialVNode)
+    const instance = initialVNode.component
+
+    setupComponent(instance)
+
+    setupRenderEffect(instance, initialVNode, container, anchor)
+
+  }
+
+  const setupRenderEffect = (instance, initialVNode, container, anchor) => {
+    const componentUpdateFn = () => {
+      if (!instance.isMounted) {
+        const subTree = instance.subTree = renderComponentRoot(instance)
+        patch(null, subTree, container, anchor)
+
+        initialVNode.el = subTree.el
+      } else {
+
+      }
+    }
+
+    const effect = (instance.effect = new ReactiveEffect(componentUpdateFn, () => queuePreFlushCb(update)))
+
+    const update = (instance.update = () => effect.run())
+    update()
+  }
+
   const mountElement = (vnode, container, anchor) => {
     const { type, props, shapeFlag } = vnode
     // 1.创建 element
@@ -209,7 +248,7 @@ function baseCreateRenderer(options: RendererOptions): any {
         if (!!(shapeFlag & ShapeFlags.ELEMENT)) {
           processElement(oldVNode, newVNode, container, anchor)
         } else if (!!(shapeFlag & ShapeFlags.COMPONENT)) {
-
+          processComponent(oldVNode, newVNode, container, anchor)
         }
     }
   }
